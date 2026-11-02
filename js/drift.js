@@ -235,7 +235,7 @@
     let musicPref = api.load('drift.music', '1') === '1';
     root.innerHTML = `
       <div class="game-head">
-        <div class="seg dr-levels" id="dr-levels">${LEVELS.map((L, i) => `<button data-i="${i}" title="${(L.name || '').replace(/"/g, '')}">${i + 1}</button>`).join('')}</div>
+        <div class="dr-levels" id="dr-levels" aria-label="選章">${LEVELS.map((L, i) => `<button data-i="${i}" title="${(L.name || '').replace(/"/g, '')}">${i + 1}</button>`).join('')}</div>
         <div class="stat">第 <b id="dr-no">1</b> 章 · <b id="dr-name"></b> · 操作 <b id="dr-ops">0</b> 次<span id="dr-par"></span></div>
       </div>
       <p class="rule">點地面，提燈旅人就會走過去。轉動建築或撥動發光的機關，這裡只有一條規則：<b>畫面上看起來接上的路，就走得過去。</b></p>
@@ -258,7 +258,7 @@
       sfx('step', 0);
       const a = AU(); if (a && a.setMood) try { a.setMood(Number.isInteger(L.mood) ? L.mood : i); } catch (e) { /* 忽略 */ }
       $('#dr-no').textContent = i + 1; $('#dr-name').textContent = L.name || ''; $('#dr-ops').textContent = 0;
-      $('#dr-par').textContent = Number.isInteger(L.par) ? ` · 最少 ${L.par} 次` : '';
+      $('#dr-par').textContent = Number.isInteger(L.par) && L.par > 0 ? ` · 最少 ${L.par} 次` : '';
       $('#dr-hint').textContent = L.hint || ''; say(''); $('#dr-next').hidden = true;
       root.querySelectorAll('#dr-levels button').forEach((b, k) => { b.classList.toggle('on', k === i); b.disabled = k > unlocked; });
       $('#dr-ctrl').innerHTML = (W.views ? '<button data-g="view" data-d="-1" title="向左轉（←）">↺ 向左轉</button><button data-g="view" data-d="1" title="向右轉（→）">向右轉 ↻</button>' : '') +
@@ -436,7 +436,7 @@
     function win() {
       done = true; sfx('door'); winTimer = setTimeout(() => sfx('win'), 700); api.confetti();
       if (level + 1 < N) { unlocked = Math.max(unlocked, level + 1); api.save('drift.unlocked', unlocked); $('#dr-next').hidden = false; root.querySelectorAll('#dr-levels button').forEach((b, k) => { b.disabled = k > unlocked; }); }
-      const par = LEVELS[level].par, best = Number.isInteger(par) && ops <= par ? '，正好是最少的操作次數' : '';
+      const par = LEVELS[level].par, best = Number.isInteger(par) && par > 0 && ops <= par ? '，正好是最少的操作次數' : '';
       say(level + 1 < N ? `抵達了！走了 ${steps} 步、操作 ${ops} 次${best}。` : `最後一章也走完了！全部 ${N} 章都抵達了。`);
     }
     function hitTop(mx, my) {

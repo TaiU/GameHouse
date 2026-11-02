@@ -16,13 +16,13 @@ Terry 的遊戲間：一個網頁大廳，收著平常愛玩的小遊戲。純�
 | 八 | 楚河漢界（象棋） | `js/xiangqi.js` |
 | 七 | 大老二 | `js/bigtwo.js` |
 | 九 | 五子連珠 | `js/gomoku.js` |
-
-準備中：迴廊幻境。
+| 十 | 迴廊幻境（等角錯覺解謎，12 關，原創音樂） | `js/drift.js`、`js/drift-levels.js`、`js/drift-audio.js` |
 
 ## 結構
 
 - `index.html`：大廳與共用樣式。用網址的 `#遊戲代號` 切換遊戲。
 - `js/<遊戲>.js`：每個遊戲一個檔，用 `GameRoom.register(id, { mount(root, api) })` 掛上大廳；`mount` 回傳清理函式。
+- 迴廊幻境分三個檔：`js/drift.js` 引擎與畫面、`js/drift-levels.js` 關卡、`js/drift-audio.js` 音樂與音效（試聽頁 `drift-audio.html`）。關卡格式與規則見 `docs/drift-level-format.md`；改關卡後用 `node tools/drift-check.js js/drift-levels.js` 驗證每關解得開，`node tools/drift-shot.js 輸出資料夾` 逐關截圖。
 - `mahjong/`：台麻專案。`dist/` 是遊戲本體，`RULES.md` 是本桌規則，測試用 `cd mahjong && node --test tests/*.test.mjs` 執行。
 
 ## 本機試玩
