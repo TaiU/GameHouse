@@ -15,7 +15,9 @@
     if (window.THREE) return Promise.resolve();
     return new Promise((res, rej) => { const s = document.createElement('script'); s.src = THREE_URL; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
   }
-  const inv = m => (m.endsWith("'") ? m[0] : m + "'");
+  // 把面名（U、R′…）換成 {軸, 層, 正負}，q=+1 表示繞正軸轉 +90°
+  const spec = m => { const d = MOVES[m[0]]; return { axis: d.axis, layer: d.layer, q: d.dir * (m.endsWith("'") ? -1 : 1) }; };
+  const inv = s => ({ axis: s.axis, layer: s.layer, q: -s.q });
 
   C.mount = function (root, api) {
     root.innerHTML = `
@@ -24,7 +26,7 @@
         <div class="stat" id="cb-state">載入中…</div>
       </div>
       <div class="cb-stage" id="cb-stage" aria-label="魔術方塊，拖曳可轉動視角"></div>
-      <p class="rule center">拖曳空白處轉視角。按面名順時針轉，按「′」那排逆時針轉。鍵盤 U D L R F B 也能轉，加 Shift 為逆時針。</p>
+      <p class="rule center">在方塊上滑動就能轉那一層（中間層也行）；拖曳方塊外的空白處轉視角。也可以按下方面名（′ 為逆時針），或用鍵盤 U D L R F B，加 Shift 為逆時針。</p>
       <div class="cb-pad" id="cb-pad">
         ${Object.keys(MOVES).map(m => `<button data-m="${m}">${FACE_NAME[m]}<small>${m}</small></button>`).join('')}
         ${Object.keys(MOVES).map(m => `<button data-m="${m}'">${FACE_NAME[m]}′<small>${m}′</small></button>`).join('')}
@@ -33,7 +35,7 @@
       <p class="msg" id="cb-msg"></p>`;
     const $ = s => root.querySelector(s), stage = $('#cb-stage');
     let alive = true, cleanupFns = [];
-    let renderer, scene, camera, cubeGroup, cubies = [], queue = [], busy = false, history = [], scrambled = false, t0 = 0, timer, steps = 0;
+    let renderer, scene, camera, cubeGroup, cubies = [], queue = [], busy = false, history = [], scrambled = false, timerArmed = false, t0 = 0, timer, steps = 0;
     let viewX = -0.5, viewY = 0.65;
 
     function build() {
@@ -75,8 +77,8 @@
     function runQueue() {
       const job = queue.shift(); if (!job) { busy = false; afterTurns(); return; }
       busy = true;
-      const T = window.THREE, spec = MOVES[job.move[0]], prime = job.move.endsWith("'");
-      const angle = spec.dir * (prime ? -1 : 1) * Math.PI / 2;
+      const T = window.THREE, spec = job.move;
+      const angle = spec.q * Math.PI / 2;
       const pivot = new T.Group(); cubeGroup.add(pivot);
       const layer = cubies.filter(c => Math.round(c.position[spec.axis]) === spec.layer);
       layer.forEach(c => pivot.attach(c));
@@ -112,7 +114,7 @@
       $('#cb-state').textContent = solved ? '已還原' : '未還原';
       if (solved && scrambled) {
         scrambled = false; clearInterval(timer);
-        const s = Math.floor((Date.now() - t0) / 1000);
+        timerArmed = false; const s = Math.floor((Date.now() - t0) / 1000);
         if (steps > 0 && !$('#cb-msg').dataset.auto) { $('#cb-msg').textContent = `轉回來了！共 ${steps} 步，用時 ${Math.floor(s / 60)} 分 ${s % 60} 秒。`; api.confetti(); }
         else $('#cb-msg').textContent = '已倒帶回原狀。';
         delete $('#cb-msg').dataset.auto;
@@ -123,12 +125,16 @@
       if (busy || !cubies.length) return;
       const faces = Object.keys(MOVES), seq = []; let prev = '';
       for (let i = 0; i < 22; i++) { let f; do f = faces[Math.floor(Math.random() * 6)]; while (f === prev); prev = f; seq.push(Math.random() < .5 ? f : f + "'"); }
-      seq.forEach(m => turn(m, 'scramble', 90));
+      seq.forEach(m => turn(spec(m), 'scramble', 90));
       scrambled = true; steps = 0; $('#cb-steps').textContent = 0; $('#cb-msg').textContent = '';
-      t0 = Date.now(); clearInterval(timer);
+      clearInterval(timer); timerArmed = true; $('#cb-time').textContent = '00:00';
+      $('#cb-msg').textContent = '打亂好了，轉第一步就開始計時。';
+    }
+    function startTimer() {
+      timerArmed = false; t0 = Date.now(); clearInterval(timer);
       timer = setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); $('#cb-time').textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; }, 500);
     }
-    function userTurn(m) { if (!cubies.length) return; turn(m, 'user', 200); }
+    function userTurn(m) { if (!cubies.length) return; if (timerArmed && scrambled) { startTimer(); $('#cb-msg').textContent = ''; } turn(typeof m === 'string' ? spec(m) : m, 'user', 200); }
 
     loadThree().then(() => { if (alive) build(); }).catch(() => { $('#cb-state').textContent = '3D 元件載入失敗，請檢查網路後重新整理。'; });
 
@@ -144,15 +150,64 @@
     $('#cb-reset').onclick = () => {
       if (busy || !cubies.length) return;
       cubies.forEach(c => { cubeGroup.remove(c); }); cubies = [];
-      stage.innerHTML = ''; renderer.dispose(); history = []; scrambled = false; steps = 0; clearInterval(timer);
+      stage.innerHTML = ''; renderer.dispose(); history = []; scrambled = false; timerArmed = false; steps = 0; clearInterval(timer);
       $('#cb-steps').textContent = 0; $('#cb-time').textContent = '00:00'; $('#cb-msg').textContent = '';
       build();
     };
     // 拖曳轉視角
+    // 指標：按在貼紙上 → 滑動轉層；按在空白處 → 轉視角
     let drag = null;
-    stage.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, vx: viewX, vy: viewY }; stage.setPointerCapture(e.pointerId); });
-    stage.addEventListener('pointermove', e => { if (!drag || !cubeGroup) return; viewX = drag.vx + (e.clientX - drag.x) * 0.01; viewY = Math.max(-1.4, Math.min(1.4, drag.vy + (e.clientY - drag.y) * 0.01)); applyView(); });
-    stage.addEventListener('pointerup', () => { drag = null; });
+    const AX = ['x', 'y', 'z'];
+    function ndc(e) { const r = stage.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * 2 - 1, y: -((e.clientY - r.top) / r.height) * 2 + 1 }; }
+    function pickSticker(e) {
+      const T = window.THREE, ray = new T.Raycaster(), p = ndc(e);
+      ray.setFromCamera(new T.Vector2(p.x, p.y), camera);
+      const hit = ray.intersectObjects(cubies, true).find(h => h.object.userData.color);
+      if (!hit) return null;
+      const q = new T.Quaternion(); hit.object.getWorldQuaternion(q);
+      const n = new T.Vector3(0, 0, 1).applyQuaternion(q).applyQuaternion(cubeGroup.quaternion.clone().invert());
+      const local = cubeGroup.worldToLocal(hit.point.clone());
+      return { normal: AX.map(a => Math.round(n[a])), point: local, cubie: hit.object.parent };
+    }
+    function toScreen(v) { const w = cubeGroup.localToWorld(v.clone()).project(camera), r = stage.getBoundingClientRect(); return { x: (w.x + 1) / 2 * r.width, y: (1 - w.y) / 2 * r.height }; }
+    function swipeMove(d, dx, dy) {
+      const T = window.THREE, ni = d.normal.findIndex(v => v !== 0);
+      const base = toScreen(d.point); let best = null;
+      for (let ti = 0; ti < 3; ti++) {
+        if (ti === ni) continue;
+        const t = new T.Vector3(); t[AX[ti]] = 1;
+        const s = toScreen(d.point.clone().add(t.clone().multiplyScalar(0.5)));
+        const sx = s.x - base.x, sy = s.y - base.y, len = Math.hypot(sx, sy) || 1;
+        const dot = (dx * sx + dy * sy) / len;
+        if (!best || Math.abs(dot) > Math.abs(best.dot)) best = { ti, dot };
+      }
+      // 拖曳方向 t（帶正負），旋轉軸 = 面法向 × t
+      const n = new T.Vector3(...d.normal), t = new T.Vector3(); t[AX[best.ti]] = Math.sign(best.dot);
+      const axisV = new T.Vector3().crossVectors(n, t), ai = [0, 1, 2].find(i => Math.round(axisV.getComponent(i)) !== 0);
+      const a = new T.Vector3(); a.setComponent(ai, 1);
+      // 繞 +軸 正轉時，接觸點的移動方向是 a × p；與 t 同向即 q=+1
+      const p = d.cubie.position.clone(), motion = new T.Vector3().crossVectors(a, p);
+      let q = Math.sign(motion.dot(t));
+      if (!q) q = Math.sign(new T.Vector3().crossVectors(a, n).dot(t)) || 1; // 點剛好在軸上（中心塊）時改用面法向判斷
+      return { axis: AX[ai], layer: Math.round(p.getComponent(ai)), q };
+    }
+    stage.addEventListener('pointerdown', e => {
+      if (!cubeGroup) return;
+      const hit = pickSticker(e);
+      drag = { x: e.clientX, y: e.clientY, vx: viewX, vy: viewY, hit, done: false };
+      stage.setPointerCapture(e.pointerId);
+    });
+    stage.addEventListener('pointermove', e => {
+      if (!drag || !cubeGroup) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (drag.hit) {
+        if (!drag.done && Math.hypot(dx, dy) > 14) { drag.done = true; if (!busy) userTurn(swipeMove(drag.hit, dx, dy)); }
+        return;
+      }
+      viewX = drag.vx + dx * 0.01; viewY = Math.max(-1.4, Math.min(1.4, drag.vy + dy * 0.01)); applyView();
+    });
+    const endDrag = () => { drag = null; };
+    stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
     const onKey = e => { const k = e.key.toUpperCase(); if (MOVES[k] && !e.metaKey && !e.ctrlKey) userTurn(e.shiftKey ? k + "'" : k); };
     document.addEventListener('keydown', onKey);
     return () => { alive = false; clearInterval(timer); document.removeEventListener('keydown', onKey); cleanupFns.forEach(f => f()); if (renderer) renderer.dispose(); };
