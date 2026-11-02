@@ -75,9 +75,9 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--brass)
 
 /* 數獨 */
 .sd-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
-.sd-grid { display: grid; grid-template-columns: repeat(9, 1fr); width: min(100%, 468px); aspect-ratio: 1; max-width: 100%;
+.sd-grid { display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr); width: min(100%, 468px); aspect-ratio: 1; max-width: 100%;
   background: var(--ivory); border: 3px solid var(--ink); border-radius: 4px; color: var(--ink); }
-.sd-cell { display: grid; place-items: center; font-family: var(--f-body); font-size: clamp(18px, 4.6vw, 28px); color: #2f5d8c;
+.sd-cell { min-width: 0; min-height: 0; overflow: hidden; display: grid; place-items: center; font-family: var(--f-body); font-size: clamp(18px, 4.6vw, 28px); color: #2f5d8c;
   border-right: 1px solid #c9bfa6; border-bottom: 1px solid #c9bfa6; cursor: pointer; user-select: none; font-variant-numeric: tabular-nums; }
 .sd-cell:nth-child(9n) { border-right: 0; } .sd-cell:nth-last-child(-n+9) { border-bottom: 0; }
 .sd-cell.br { border-right: 2px solid var(--ink); } .sd-cell.bb { border-bottom: 2px solid var(--ink); }
@@ -96,8 +96,8 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--brass)
 @media (max-width: 720px) { .sd-pad { grid-template-columns: repeat(9, 1fr); gap: 4px; } .sd-pad button b { font-size: 20px; } .sd-side { width: 100%; } }
 
 /* 星位 */
-.st-grid { --n: 7; display: grid; grid-template-columns: repeat(var(--n), 1fr); width: min(100%, 480px); aspect-ratio: 1; margin: 0 auto; border: 3px solid var(--ink); border-radius: 4px; overflow: hidden; }
-.st-cell { border: 0; border-right: 1px solid rgba(29,42,38,.18); border-bottom: 1px solid rgba(29,42,38,.18); display: grid; place-items: center; padding: 0; color: var(--ink); }
+.st-grid { --n: 7; display: grid; grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr); width: min(100%, 480px); aspect-ratio: 1; margin: 0 auto; border: 3px solid var(--ink); border-radius: 4px; overflow: hidden; }
+.st-cell { min-width: 0; min-height: 0; overflow: hidden; border: 0; border-right: 1px solid rgba(29,42,38,.18); border-bottom: 1px solid rgba(29,42,38,.18); display: grid; place-items: center; padding: 0; color: var(--ink); }
 .st-cell.wr { border-right: 3px solid var(--ink); } .st-cell.wb { border-bottom: 3px solid var(--ink); }
 .st-cell .star { font-size: clamp(20px, 5vw, 34px); line-height: 1; }
 .st-cell .x { font-size: clamp(14px, 3vw, 20px); opacity: .45; }
