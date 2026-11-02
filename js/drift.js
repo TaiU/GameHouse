@@ -490,7 +490,8 @@
     load(level); raf = requestAnimationFrame(frame);
     if (dev) { // 給截圖工具用：?drift-dev 解鎖全部章節並開放這組介面
       window.__drift = {
-        get W() { return W; }, get st() { return st; }, get player() { return player; }, load,
+        get W() { return W; }, get st() { return st; }, get player() { return player; }, get busy() { return !!(anim || walk); }, load,
+        screenOf(i) { const p = D.place(W, i, st); return P(p[0], p[1], p[2] + .5); },
         apply(plan) { plan.forEach(m => { player = m.stand; const ns = D.operate(W, st, m.g, m.dir, player); if (!ns.jam) { st = ns; ops++; } }); anim = null; walk = null; },
       };
     }
