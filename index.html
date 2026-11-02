@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Terry 的遊戲間</title>
+<meta name="description" content="數字、牌桌、棋盤和一點點空間錯覺，十桌原創小遊戲。">
+<meta name="theme-color" content="#13342b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/logo.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="遊戲間">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
@@ -51,6 +61,14 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--brass)
 .box .tag.ok { color: var(--brass); }
 .box .tag.wait { color: var(--ivory-dim); }
 .box .glyph { position: absolute; right: 14px; top: 10px; font-family: var(--f-display); font-size: 40px; color: rgba(244,236,216,.12); pointer-events: none; }
+.hall-title { display: flex; align-items: center; gap: 14px; }
+.hall-title img { width: clamp(44px, 7vw, 60px); height: auto; flex: none; border-radius: 22%; box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+.install { display: flex; align-items: center; gap: 12px; margin: -12px 0 22px; padding: 10px 14px; border: 1px dashed var(--felt-line); border-radius: 6px; color: var(--ivory-dim); font-size: 13.5px; }
+.install[hidden] { display: none; }
+.install > span { flex: 1; min-width: 0; }
+.install b { color: var(--ivory); font-weight: 500; }
+.install .go { flex: none; background: var(--brass); color: var(--ink); border: 0; border-radius: 99px; padding: 4px 14px; font-weight: 700; }
+.install .x { flex: none; background: none; border: 0; color: var(--ivory-dim); font-size: 18px; line-height: 1; padding: 2px 6px; }
 .foot { margin-top: 36px; color: var(--ivory-dim); font-size: 13px; max-width: 62ch; }
 
 /* 遊戲桌 */
@@ -233,11 +251,16 @@ button:disabled { opacity: .4; cursor: default; }
   <section id="hall">
     <header class="hall-head">
       <div>
-        <h1>Terry 的<em>遊戲間</em></h1>
+        <div class="hall-title"><img src="icons/logo.svg" alt="" width="60" height="60"><h1>Terry 的<em>遊戲間</em></h1></div>
         <p>數字、牌桌、棋盤和一點點空間錯覺，平常愛玩的都收在這一桌。</p>
       </div>
       <div class="counter">已開桌 <b id="ready-count">0</b> / 10</div>
     </header>
+    <div class="install" id="install" hidden>
+      <span id="install-text"></span>
+      <button class="go" id="install-go" hidden>安裝</button>
+      <button class="x" id="install-x" aria-label="不再顯示">×</button>
+    </div>
     <div class="shelf" id="shelf"></div>
     <p class="foot">玩法參考常見的經典遊戲規則，畫面、關卡、名稱與音樂都是這個遊戲間自己的。進度與設定只存在你這台裝置的瀏覽器裡。</p>
   </section>
@@ -334,6 +357,33 @@ window.GameRoom = (function () {
       if (++f < 200) requestAnimationFrame(tick); else cv.hidden = true;
     })();
   }
+})();
+</script>
+<script>
+// 網頁 app：註冊離線用的 service worker，並在還沒安裝時提示加到主畫面
+(function () {
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+  const box = document.getElementById('install'), text = document.getElementById('install-text'), go = document.getElementById('install-go');
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  let dismissed = false;
+  try { dismissed = localStorage.getItem('gh-install-dismissed') === '1'; } catch (e) {}
+  if (standalone || dismissed) return;
+  document.getElementById('install-x').onclick = () => { box.hidden = true; try { localStorage.setItem('gh-install-dismissed', '1'); } catch (e) {} };
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (ios) {
+    text.innerHTML = '想把遊戲間放到主畫面？在 Safari 點下方的<b>分享</b>，再選<b>加入主畫面</b>，之後沒網路也能玩。';
+    box.hidden = false;
+  }
+  let deferred = null;
+  addEventListener('beforeinstallprompt', e => {
+    e.preventDefault(); deferred = e;
+    text.innerHTML = '把遊戲間<b>安裝成 app</b>，從主畫面一點就開，沒網路也能玩。';
+    go.hidden = false; box.hidden = false;
+  });
+  go.onclick = async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; box.hidden = true; };
+  addEventListener('appinstalled', () => { box.hidden = true; });
 })();
 </script>
 </body>

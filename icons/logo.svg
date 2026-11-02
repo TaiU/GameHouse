@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<!-- 遊戲間 logo「門中一子」：黃銅門框裡一顆朱紅棋子。#bg 是底板，#mark 是圖案；tools/make-icons.js 依這兩個 id 產生各尺寸圖示 -->
+<defs><radialGradient id="felt" cx="50%" cy="20%" r="85%"><stop offset="0" stop-color="#1f5040"/><stop offset="1" stop-color="#11302a"/></radialGradient></defs>
+<rect id="bg" width="512" height="512" rx="112" fill="url(#felt)"/>
+<g id="mark">
+<g fill="none" stroke="#d8a94e" stroke-width="30" stroke-linejoin="round" stroke-linecap="round">
+<path d="M150 400V132h76v76h-76"/><path d="M362 400V132h-76v76h76"/>
+</g>
+<circle cx="256" cy="318" r="56" fill="#c5432f"/><circle cx="256" cy="318" r="38" fill="none" stroke="#f4ecd8" stroke-width="7" opacity=".85"/>
+</g>
+</svg>
