@@ -149,6 +149,7 @@
       const next = [];
       for (const node of frontier) {
         const [p, st] = node, reach = D.reach(W, st, p);
+        if (!reach.size) reach.set(p, -1); // 旅人被擋住時走不動，但仍然可以轉建築、撥機關（和遊戲一致）
         if (reach.has(W.goal)) {
           const plan = []; let n = node;
           while (n.from) { plan.unshift(n.from.m); n = n.from.node; }
