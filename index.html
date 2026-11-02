@@ -185,6 +185,17 @@ button:disabled { opacity: .4; cursor: default; }
 .cb-pad button small { font-family: var(--f-body); font-size: 11px; color: var(--ivory-dim); }
 .cb-pad button:hover { border-color: var(--brass); }
 
+/* 旋轉拼板 */
+.sp-grid { --n: 5; display: grid; grid-template-columns: repeat(var(--n), 1fr); width: min(100%, 480px); aspect-ratio: 1; margin: 0 auto; gap: 3px; padding: 6px; background: #0f2a22; border-radius: 10px; }
+.sp-tile { padding: 0; border: 0; border-radius: 6px; background: rgba(255,255,255,.05); display: grid; overflow: hidden; }
+.sp-tile span { display: grid; transition: transform .18s ease; }
+.sp-tile svg { width: 100%; height: 100%; }
+.sp-tile path { fill: none; stroke: var(--ivory-dim); stroke-width: 13; stroke-linecap: round; }
+.sp-tile .dot circle { fill: var(--ivory-dim); }
+.sp-tile.ok path { stroke: var(--brass); } .sp-tile.ok .dot circle { fill: var(--brass); }
+.sp-grid.won .sp-tile path { stroke: #8fcfc4; } .sp-grid.won .sp-tile .dot circle { fill: #8fcfc4; }
+@media (prefers-reduced-motion: reduce) { .sp-tile span { transition: none; } }
+
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; width: 100%; height: 100%; }
 @media (prefers-reduced-motion: reduce) { .box, .tm-tile { transition: none; } }
 </style>
@@ -228,12 +239,13 @@ window.GameRoom = (function () {
 <script src="js/bigtwo.js"></script>
 <script src="js/numbox.js"></script>
 <script src="js/cube.js"></script>
+<script src="js/spin.js"></script>
 <script>
 (function () {
   const CATALOG = [
     { id: 'sudoku', no: '一', name: '九宮數獨', glyph: '九', desc: '四種難度，每題都只有唯一解。可做筆記、復原、看提示。' },
     { id: 'cube', no: '二', name: '轉角方塊', glyph: '方', desc: '3D 三階魔術方塊。一鍵打亂後自己轉回來，或按倒帶看它一步步還原。' },
-    { id: 'spin', no: '三', name: '旋轉拼板', glyph: '旋', desc: '轉動拼板碎片，讓它們剛好填滿輪廓。' },
+    { id: 'spin', no: '三', name: '旋轉拼板', glyph: '旋', desc: '點一下把板子轉 90 度，讓所有線條首尾相接，不留任何斷頭。' },
     { id: 'mahjong', no: '四', name: '台灣麻將', glyph: '牌', href: 'mahjong/dist/index.html', desc: '十六張台麻，你和三家電腦。你原本優化過的牌桌直接搬進來，台數照本桌規則結算。' },
     { id: 'stars', no: '五', name: '星位', glyph: '★', desc: '每排、每列、每個色塊各一顆星，星星互不相碰。' },
     { id: 'numbox', no: '五', name: '數字框框', glyph: '框', desc: '拖拉畫出長方形，每塊恰好框住一個數字，格子數等於那個數字。三種盤面大小。' },
