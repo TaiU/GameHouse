@@ -1,5 +1,5 @@
-// 旋轉拼板：點一下把板子轉 90 度，讓所有線條首尾相接、不留斷頭
-(function () {
+// 旋轉拼板（第二種玩法「轉板接線」）：點一下把板子轉 90 度，讓所有線條首尾相接、不留斷頭
+const SpinPipe = (function () {
   const S = {};
   // 方向位元：上 1、右 2、下 4、左 8
   const rot = m => ((m << 1) | (m >> 3)) & 15;
@@ -91,5 +91,202 @@
     newGame();
   };
 
+  return S;
+})();
+
+// 旋轉拼板（主玩法「翻轉圖樣」）：每塊板子正反兩面顏色不同。
+// 把一整排（或一整列）繞著中心轉半圈：順序左右（上下）顛倒，每塊同時翻到另一面。
+// 用最少的轉動，讓盤面變成上方的目標圖樣。
+const SpinFlip = (function () {
+  const F = {};
+  // 狀態：t[i] 板子編號、s[i] 0 正面 / 1 反面；cols[id] = [正面色, 反面色]
+  F.apply = function (N, st, m) {
+    const t = st.t.slice(), s = st.s.slice();
+    for (let k = 0; k < N; k++) {
+      const a = m < N ? m * N + k : k * N + (m - N);
+      const b = m < N ? m * N + (N - 1 - k) : (N - 1 - k) * N + (m - N);
+      t[a] = st.t[b]; s[a] = 1 - st.s[b];
+    }
+    return { t, s };
+  };
+  F.show = (cols, st) => st.t.map((id, i) => cols[id][st.s[i]]);
+  const key = st => String.fromCharCode(...st.t.map((id, i) => id * 2 + st.s[i] + 48));
+  // 廣度優先找最短解；回傳步驟陣列或 null
+  F.solve = function (N, cols, st, goal, maxD) {
+    const g = goal.join('');
+    if (F.show(cols, st).join('') === g) return [];
+    let front = [{ st, path: [] }]; const seen = new Set([key(st)]);
+    for (let d = 1; d <= maxD; d++) {
+      const next = [];
+      for (const n of front) for (let m = 0; m < 2 * N; m++) {
+        if (n.path.length && n.path[n.path.length - 1] === m) continue;
+        const ns = F.apply(N, n.st, m), k = key(ns);
+        if (seen.has(k)) continue; seen.add(k);
+        const path = n.path.concat(m);
+        if (F.show(cols, ns).join('') === g) return path;
+        next.push({ st: ns, path });
+      }
+      front = next;
+    }
+    return null;
+  };
+  F.generate = function (N, K, steps, rnd = Math.random) {
+    const ri = n => Math.floor(rnd() * n);
+    let best = null;
+    for (let tries = 0; tries < 12; tries++) {
+      const cols = [];
+      for (let i = 0; i < N * N; i++) { const a = ri(K); let b = ri(K - 1); if (b >= a) b++; cols.push([a, b]); }
+      const start = { t: cols.map((_, i) => i), s: cols.map(() => ri(2)) };
+      let g = start, last = -1;
+      for (let k = 0; k < steps; k++) { let m; do m = ri(2 * N); while (m === last); g = F.apply(N, g, m); last = m; }
+      const goal = F.show(cols, g);
+      const sol = F.solve(N, cols, start, goal, steps);
+      if (!sol || !sol.length) continue;
+      const cand = { N, cols, start, goal, par: sol.length, sol };
+      if (!best || cand.par > best.par) best = cand;
+      if (cand.par >= steps) break;
+    }
+    return best;
+  };
+
+  const PAL = ['#d8a94e', '#c5432f', '#f4ecd8', '#3f8f84', '#2b3b55'];
+  const LV = [
+    { n: 3, k: 3, steps: 4, name: '3×3' },
+    { n: 4, k: 4, steps: 6, name: '4×4' },
+    { n: 5, k: 4, steps: 7, name: '5×5' },
+  ];
+
+  F.mount = function (root, api) {
+    let L = Math.min(+api.load('spin.flip', 0) || 0, LV.length - 1), G, cur, hist, busy = false, done = false, timers = [];
+    root.innerHTML = `
+      <div class="game-head">
+        <div class="seg" id="sf-lv">${LV.map((l, i) => `<button data-i="${i}">${l.name}</button>`).join('')}</div>
+        <div class="stat">轉了 <b id="sf-moves">0</b> 次 · 最少 <b id="sf-par">-</b> 次</div>
+      </div>
+      <p class="rule">在盤面上左右滑一排、上下滑一列（或點邊上的把手），那一排就繞中心轉半圈：順序顛倒，每塊翻到另一面的顏色。轉成上方的目標圖樣就過關。</p>
+      <div class="sf-goal"><span>目標</span><div class="sf-mini" id="sf-goal"></div></div>
+      <div class="sf-board" id="sf-board"></div>
+      <div class="tools center">
+        <button id="sf-undo">復原一步</button><button id="sf-reset">從頭來</button>
+        <button id="sf-hint">提示</button><button id="sf-new" class="primary">新題目</button>
+      </div>
+      <p class="msg" id="sf-msg"></p>`;
+    const $ = s => root.querySelector(s), board = $('#sf-board'), msg = t => { $('#sf-msg').textContent = t; };
+    const N = () => G.N;
+
+    function newGame() {
+      const l = LV[L];
+      G = F.generate(l.n, l.k, l.steps);
+      cur = G.start; hist = []; done = false;
+      root.querySelectorAll('#sf-lv button').forEach(b => b.classList.toggle('on', +b.dataset.i === L));
+      $('#sf-par').textContent = G.par;
+      const goal = $('#sf-goal'); goal.style.setProperty('--n', G.N);
+      goal.innerHTML = G.goal.map(c => `<i style="background:${PAL[c]}"></i>`).join('');
+      build(); msg('');
+    }
+    function build() {
+      const n = N();
+      board.style.setProperty('--n', n);
+      let h = '<span></span>';
+      for (let c = 0; c < n; c++) h += `<button class="sf-h col" data-m="${n + c}" aria-label="轉第 ${c + 1} 列">⇅</button>`;
+      for (let r = 0; r < n; r++) {
+        h += `<button class="sf-h row" data-m="${r}" aria-label="轉第 ${r + 1} 排">⇄</button>`;
+        for (let c = 0; c < n; c++) h += `<div class="sf-t" data-i="${r * n + c}"><i class="fr"></i><i class="bk"></i></div>`;
+      }
+      board.innerHTML = h; paint();
+    }
+    function tiles() { return [...board.querySelectorAll('.sf-t')]; }
+    function paint() {
+      const show = F.show(G.cols, cur);
+      tiles().forEach((el, i) => {
+        el.style.transition = 'none'; el.style.transform = ''; el.classList.toggle('ok', show[i] === G.goal[i]);
+        el.firstChild.style.background = PAL[show[i]];
+        el.lastChild.style.background = PAL[G.cols[cur.t[i]][1 - cur.s[i]]];
+      });
+      $('#sf-moves').textContent = hist.length;
+      $('#sf-undo').disabled = !hist.length || done;
+    }
+    function spin(m, record = true) {
+      if (busy || done) return;
+      board.querySelectorAll('.sf-h.hint').forEach(h => h.classList.remove('hint'));
+      const n = N(), els = tiles(), isRow = m < n, idx = [];
+      for (let k = 0; k < n; k++) idx.push(isRow ? m * n + k : k * n + (m - n));
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const finish = () => {
+        if (record) hist.push(cur);
+        cur = F.apply(n, cur, m); busy = false; paint(); check();
+      };
+      if (reduce) return finish();
+      busy = true;
+      const box = idx.map(i => els[i].getBoundingClientRect());
+      const mid = isRow ? (box[0].left + box[n - 1].right) / 2 : (box[0].top + box[n - 1].bottom) / 2;
+      idx.forEach((i, k) => {
+        const el = els[i], b = box[k];
+        el.lastChild.style.transform = isRow ? 'rotateY(180deg)' : 'rotateX(180deg)';
+        el.style.transformOrigin = isRow ? `${mid - b.left}px 50%` : `50% ${mid - b.top}px`;
+        el.style.transition = 'none'; el.style.transform = '';
+        el.getBoundingClientRect();
+        el.style.transition = 'transform .42s cubic-bezier(.5,0,.3,1)';
+        el.style.transform = isRow ? 'rotateY(180deg)' : 'rotateX(-180deg)';
+        el.style.zIndex = 2;
+      });
+      timers.push(setTimeout(() => { idx.forEach(i => { els[i].style.zIndex = ''; els[i].lastChild.style.transform = ''; }); finish(); }, 440));
+    }
+    function check() {
+      if (F.show(G.cols, cur).join('') !== G.goal.join('')) return;
+      done = true; board.classList.add('won'); $('#sf-undo').disabled = true;
+      const p = hist.length <= G.par;
+      msg(p ? `完美！用最少的 ${hist.length} 次轉出目標。` : `轉出來了！用了 ${hist.length} 次，最少可以 ${G.par} 次。`);
+      api.confetti();
+    }
+    board.addEventListener('click', e => { const b = e.target.closest('.sf-h'); if (b) spin(+b.dataset.m); });
+    // 滑動：起點那塊決定是哪一排/列
+    let p0 = null;
+    board.addEventListener('pointerdown', e => { const t = e.target.closest('.sf-t'); if (t) p0 = { x: e.clientX, y: e.clientY, i: +t.dataset.i }; });
+    const end = e => {
+      if (!p0) return; const dx = e.clientX - p0.x, dy = e.clientY - p0.y, n = N(), i = p0.i; p0 = null;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
+      spin(Math.abs(dx) > Math.abs(dy) ? Math.floor(i / n) : n + (i % n));
+    };
+    board.addEventListener('pointerup', end);
+    board.addEventListener('pointercancel', () => { p0 = null; });
+    $('#sf-undo').onclick = () => { if (busy || done || !hist.length) return; cur = hist.pop(); paint(); msg(''); };
+    $('#sf-reset').onclick = () => { if (busy) return; cur = G.start; hist = []; done = false; board.classList.remove('won'); paint(); msg(''); };
+    $('#sf-hint').onclick = () => {
+      if (busy || done) return;
+      // 先看是不是還走在出題時算好的最短路上，否則就地搜尋
+      let sol = null, c = G.start; const k = key(cur);
+      for (let j = 0; j <= G.sol.length && !sol; j++) { if (key(c) === k && j < G.sol.length) sol = G.sol.slice(j); if (j < G.sol.length) c = F.apply(N(), c, G.sol[j]); }
+      if (!sol) sol = F.solve(N(), G.cols, cur, G.goal, G.N >= 5 ? 6 : 8);
+      if (!sol) { msg('離目標有點遠了，先按「從頭來」再試試。'); return; }
+      const m = sol[0], n = N(), h = board.querySelector(`.sf-h[data-m="${m}"]`);
+      msg(`提示：轉${m < n ? `第 ${m + 1} 排` : `第 ${m - n + 1} 列`}，之後還要 ${sol.length - 1} 次。`);
+      h.classList.add('hint'); timers.push(setTimeout(() => h.classList.remove('hint'), 1600));
+    };
+    $('#sf-new').onclick = () => { if (busy) return; board.classList.remove('won'); newGame(); };
+    $('#sf-lv').onclick = e => { const b = e.target.closest('button'); if (!b || busy) return; L = +b.dataset.i; api.save('spin.flip', L); board.classList.remove('won'); newGame(); };
+    newGame();
+    return () => timers.forEach(clearTimeout);
+  };
+  return F;
+})();
+
+(function () {
+  const S = { flip: SpinFlip, pipe: SpinPipe };
+  S.mount = function (root, api) {
+    let mode = api.load('spin.mode', 'flip') === 'pipe' ? 'pipe' : 'flip', cleanup = null;
+    root.innerHTML = `<div class="seg sp-modes" id="sp-modes">
+        <button data-m="flip">翻轉圖樣</button><button data-m="pipe">轉板接線</button></div><div id="sp-body"></div>`;
+    const body = root.querySelector('#sp-body');
+    function go(m) {
+      if (cleanup) { cleanup(); cleanup = null; }
+      mode = m; api.save('spin.mode', m);
+      root.querySelectorAll('#sp-modes button').forEach(b => b.classList.toggle('on', b.dataset.m === m));
+      cleanup = S[m].mount(body, api) || null;
+    }
+    root.querySelector('#sp-modes').onclick = e => { const b = e.target.closest('button'); if (b && b.dataset.m !== mode) go(b.dataset.m); };
+    go(mode);
+    return () => { if (cleanup) cleanup(); };
+  };
   if (typeof module !== 'undefined') module.exports = S; else window.GameRoom.register('spin', S);
 })();
