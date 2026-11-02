@@ -136,6 +136,36 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--brass)
 .xq-dot { width: 4%; aspect-ratio: 1; border-radius: 50%; border: 0; padding: 0; background: rgba(47,122,74,.75); }
 .xq-dot.cap { width: 10%; background: none; border: 3px solid rgba(197,67,47,.85); z-index: 2; }
 
+/* 大老二 */
+.b2-table { display: grid; grid-template-columns: 1fr 1.6fr 1fr; grid-template-areas: ". n ." "w c e"; gap: 10px; align-items: start; }
+.b2-n { grid-area: n; } .b2-w { grid-area: w; } .b2-e { grid-area: e; } .b2-center { grid-area: c; }
+.b2-seat { display: grid; gap: 6px; justify-items: center; text-align: center; min-width: 0; }
+.b2-name { font-family: var(--f-display); font-size: 17px; display: grid; }
+.b2-name small { font-family: var(--f-body); font-size: 12px; color: var(--ivory-dim); font-variant-numeric: tabular-nums; }
+.b2-name.on { color: var(--brass); }
+.b2-backs { display: flex; height: 34px; }
+.b2-backs span { width: 22px; height: 32px; margin-left: -14px; border-radius: 3px; border: 1px solid #0c201a; background: repeating-linear-gradient(45deg, #7a2a20 0 4px, #8f3528 4px 8px); }
+.b2-backs span:first-child { margin-left: 0; }
+.b2-said { min-height: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; color: var(--ivory-dim); font-family: var(--f-display); }
+.b2-center { min-height: 140px; display: grid; place-content: center; justify-items: center; gap: 8px; border: 1px dashed var(--felt-line); border-radius: 10px; padding: 12px; }
+.b2-lastby { color: var(--ivory-dim); font-size: 13px; }
+.b2-pile { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.b2-card { display: inline-grid; place-items: center; align-content: center; width: 44px; height: 62px; border-radius: 5px; background: var(--ivory); color: var(--ink); box-shadow: 0 2px 0 #b9a77e; line-height: 1; gap: 3px; }
+.b2-card b { font-size: 18px; font-weight: 700; } .b2-card i { font-style: normal; font-size: 18px; }
+.b2-card.red { color: #b52f22; }
+.b2-card.mini { width: 26px; height: 36px; gap: 1px; } .b2-card.mini b, .b2-card.mini i { font-size: 12px; }
+.b2-status { text-align: center; color: var(--ivory-dim); margin: 14px 0 8px; min-height: 1.6em; }
+.b2-hand { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; padding-top: 12px; }
+.b2-cardbtn { background: none; border: 0; padding: 0; transition: transform .12s; border-radius: 5px; }
+.b2-cardbtn.sel { transform: translateY(-12px); }
+.b2-cardbtn.sel .b2-card { box-shadow: 0 0 0 2px var(--brass), 0 2px 0 #b9a77e; }
+.b2-score { text-align: center; color: var(--ivory-dim); font-size: 13px; margin-top: 8px; font-variant-numeric: tabular-nums; }
+.b2-score b { color: var(--ivory); }
+.linkish { background: none; border: 0; color: var(--brass); text-decoration: underline; padding: 0 4px; }
+.primary.inline { margin-left: 10px; background: var(--brass); color: var(--ink); border: 0; border-radius: 6px; padding: 4px 12px; font-family: var(--f-body); font-size: 14px; font-weight: 700; }
+button:disabled { opacity: .4; cursor: default; }
+@media (max-width: 560px) { .b2-backs span { margin-left: -17px; } .b2-card { width: 36px; height: 52px; } .b2-card b, .b2-card i { font-size: 15px; } .b2-hand { gap: 2px; } .b2-table { grid-template-columns: 1fr 1.3fr 1fr; gap: 6px; } }
+
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; width: 100%; height: 100%; }
 @media (prefers-reduced-motion: reduce) { .box, .tm-tile { transition: none; } }
 </style>
@@ -176,6 +206,7 @@ window.GameRoom = (function () {
 <script src="js/gomoku.js"></script>
 <script src="js/tilematch.js"></script>
 <script src="js/xiangqi.js"></script>
+<script src="js/bigtwo.js"></script>
 <script>
 (function () {
   const CATALOG = [
@@ -186,7 +217,7 @@ window.GameRoom = (function () {
     { id: 'stars', no: '五', name: '星位', glyph: '★', desc: '每排、每列、每個色塊各一顆星，星星互不相碰。' },
     { id: 'numbox', no: '五', name: '數字框框', glyph: '框', desc: '把盤面切成長方形，每塊面積剛好等於框裡的數字。' },
     { id: 'tilematch', no: '六', name: '疊牌配對', glyph: '發', desc: '疊了四層的麻將牌，兩兩配對把桌面清空。每局保證有解。' },
-    { id: 'bigtwo', no: '七', name: '大老二', glyph: '♠', desc: '和三位電腦玩家對打，先出完手牌的人贏。' },
+    { id: 'bigtwo', no: '七', name: '大老二', glyph: '♠', desc: '台灣常見玩法，和三家電腦對打。梅花 3 先出，五張牌組有順子、葫蘆、鐵支、同花順，跨局累計分數。' },
     { id: 'xiangqi', no: '八', name: '楚河漢界', glyph: '帥', desc: '中國象棋，對電腦有三種強度，也能兩人同機對弈。可悔棋。' },
     { id: 'gomoku', no: '九', name: '五子連珠', glyph: '●', desc: '十五路棋盤，先連成五子者勝。對電腦有兩種強度。' },
     { id: 'drift', no: '十', name: '迴廊幻境', glyph: '廊', desc: '轉動不可能的建築，讓小旅人走到終點，配上原創環境音樂。' },
