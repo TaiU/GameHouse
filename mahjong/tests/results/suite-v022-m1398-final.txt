@@ -1,0 +1,47 @@
+✔ actual app bindings: retained tile, Enter, discard and AI callbacks cannot act twice (32.129ms)
+✔ nearest hu outranks another hu and lower claims; one payment (7.6524ms)
+✔ chi only next player and all available sequences are separate choices (1.0321ms)
+✔ passed hu remains blocked until that player draws (0.9815ms)
+✔ rob added kong moves exactly the fourth tile into winning hand (0.838ms)
+✔ concealed kong is hidden from rival AI and replacement can cascade flowers (0.8345ms)
+✔ eight flowers and seven rob one terminate immediately without normal hand (0.8933ms)
+✔ 16-tile reserve draw, no transfer, dealer repeat (2.778ms)
+✔ four dealer changes rotate wind and negatives do not stop next hand (0.7358ms)
+✔ D03 declining self draw still permits ron before own next draw (2.1417ms)
+✔ U02 replay: previous-round physical tile 96 cannot be discarded again (43.599ms)
+✔ missing, future, wrong-round versions reject atomically; observation carries valid commands (2.4322ms)
+✔ same-seat kong replacement invalidates previously legal discard even if tile remains (1.2514ms)
+✔ response vote invalidates outstanding hu/pass; refreshed response remains usable (1.378ms)
+✔ captured click/Enter/next callbacks do not re-stamp, mutate or run twice (0.2976ms)
+✔ queued AI callbacks reject stale versions and canceled generations, current callback runs once (0.4865ms)
+✔ D01 original last 16 physical IDs never drawn; deal in four-tile packets (3.8844ms)
+✔ D01 last discard still accepts hu; no kong and illegal kong is atomic (4.8608ms)
+✔ D01 exhausted wall allows chi and another discard before draw (2.5116ms)
+✔ D01 kong then final flower leaves legal kong and reports replacement shortage (0.702ms)
+✔ D02 transfers expose mandatory accounting fields and settlement IDs (0.1843ms)
+✔ D03 draw attempt without actual tile does not clear passed hu (0.725ms)
+✔ D04 nominal two-sided shape cannot add a fifth owned copy (0.6267ms)
+✔ D05 seven flowers do not retroactively rob earlier eighth; events unique (0.6538ms)
+✔ D05 seven rob one references unique event without moving flower; fixed 8 base (1.004ms)
+✔ D06 snapshot is independent; rival view strips reserve and hidden kong (0.914ms)
+{"hands":12,"wins":12,"draws":0,"actions":616}
+✔ 16-tile winning structure requires five melds and a pair (1.4381ms)
+✔ payment dealer relationship, repeats, zero tai and negatives (0.898ms)
+✔ scoring excludes double counted patterns (2.3485ms)
+✔ flower set substitutes correct flower; flower draw is not kong draw (0.3191ms)
+✔ initial deal conservation and illegal input atomicity (9.1249ms)
+✔ multiple real AI hands terminate, conserve tiles/money and advance (1225.2924ms)
+✔ pinhu two-sided versus edge/closed wait and flowers (6.3527ms)
+✔ discard completes pung: four concealed becomes three concealed (0.9743ms)
+✔ small dragons replace individual dragon bonuses; wind can stack (0.3088ms)
+✔ suit patterns select correct tier (0.6548ms)
+✔ all exposed excludes unique wait; open zero-tai hand is legal (0.4181ms)
+✔ event tai requires correct win mode (0.3208ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1402.6688

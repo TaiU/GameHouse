@@ -1,0 +1,30 @@
+✔ nearest hu outranks another hu and lower claims; one payment (4.7797ms)
+✔ chi only next player and all available sequences are separate choices (0.7995ms)
+✔ passed hu remains blocked until that player draws (0.7649ms)
+✔ rob added kong moves exactly the fourth tile into winning hand (0.7478ms)
+✔ concealed kong is hidden from rival AI and replacement can cascade flowers (0.5753ms)
+✔ eight flowers and seven rob one terminate immediately without normal hand (0.6137ms)
+✔ 16-tile reserve draw, no transfer, dealer repeat (1.1809ms)
+✔ four dealer changes rotate wind and negatives do not stop next hand (0.5177ms)
+✔ D03 passed hu is defined on discard/rob reaction, not declining self draw (0.6898ms)
+{"hands":12,"wins":12,"draws":0,"actions":616}
+✔ 16-tile winning structure requires five melds and a pair (1.2194ms)
+✔ payment dealer relationship, repeats, zero tai and negatives (1.0609ms)
+✔ scoring excludes double counted patterns (2.7733ms)
+✔ flower set substitutes correct flower; flower draw is not kong draw (0.6499ms)
+✔ initial deal conservation and illegal input atomicity (9.6689ms)
+✔ multiple real AI hands terminate, conserve tiles/money and advance (1152.8094ms)
+✔ pinhu two-sided versus edge/closed wait and flowers (5.2853ms)
+✔ discard completes pung: four concealed becomes three concealed (1.5368ms)
+✔ small dragons replace individual dragon bonuses; wind can stack (0.6328ms)
+✔ suit patterns select correct tier (0.7227ms)
+✔ all exposed excludes unique wait; open zero-tai hand is legal (0.508ms)
+✔ event tai requires correct win mode (0.2729ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1281.4729

@@ -1,0 +1,24 @@
+{
+  "case": "U02",
+  "status": "PASS",
+  "oldAction": {
+    "kind": "discard",
+    "tile": 96,
+    "roundId": "round-1",
+    "turnVersion": 1
+  },
+  "currentAction": {
+    "kind": "discard",
+    "tile": 96,
+    "roundId": "round-2",
+    "turnVersion": 1
+  },
+  "before": {
+    "round": "round-2",
+    "turn": 1,
+    "wall": 73,
+    "discards": 0
+  },
+  "rejectedWithoutMutation": true,
+  "currentAccepted": true
+}

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Terry 的遊戲間</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* 版面：一張墨綠絨布牌桌，遊戲像擺在桌上的盒子；進入遊戲後桌面換成該遊戲 */
+:root {
+  --felt: #13342b; --felt-2: #1b4538; --felt-line: #2a5a4a;
+  --ivory: #f4ecd8; --ivory-dim: #c9c0aa; --brass: #d8a94e; --cinnabar: #c5432f;
+  --ink: #1d2a26; --board-wood: #d9b77a;
+  --f-display: "LXGW WenKai TC", "Noto Serif TC", "PingFang TC", serif;
+  --f-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { min-height: 100%; }
+body {
+  background: var(--felt);
+  background-image: radial-gradient(ellipse at 50% -10%, var(--felt-2), var(--felt) 70%);
+  color: var(--ivory); font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+}
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+/* 大廳 */
+.hall-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+.hall-head h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(34px, 6vw, 54px); line-height: 1.1; margin: 0; letter-spacing: .04em; text-wrap: balance; }
+.hall-head h1 em { font-style: normal; color: var(--brass); }
+.hall-head p { margin: 6px 0 0; color: var(--ivory-dim); }
+.counter { font-family: var(--f-display); color: var(--ivory-dim); font-size: 15px; }
+.counter b { color: var(--brass); font-size: 22px; }
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.box {
+  position: relative; text-align: left; border: 1px solid var(--felt-line); border-radius: 6px;
+  background: linear-gradient(160deg, rgba(255,255,255,.05), rgba(0,0,0,.12)); padding: 18px 18px 16px;
+  display: grid; grid-template-rows: auto auto 1fr auto; gap: 6px; min-height: 172px;
+  transition: transform .18s ease, border-color .18s ease, background .18s;
+}
+.box:hover:not([disabled]) { transform: translateY(-3px); border-color: var(--brass); background: linear-gradient(160deg, rgba(216,169,78,.12), rgba(0,0,0,.1)); }
+.box[disabled] { cursor: default; opacity: .62; }
+.box .no { font-family: var(--f-display); color: var(--brass); font-size: 13px; letter-spacing: .12em; }
+.box h2 { font-family: var(--f-display); font-size: 25px; margin: 0; line-height: 1.2; }
+.box p { margin: 0; color: var(--ivory-dim); font-size: 13.5px; }
+.box .tag { justify-self: start; font-size: 12px; letter-spacing: .08em; padding: 2px 9px; border-radius: 99px; border: 1px solid currentColor; }
+.box .tag.ok { color: var(--brass); }
+.box .tag.wait { color: var(--ivory-dim); }
+.box .glyph { position: absolute; right: 14px; top: 10px; font-family: var(--f-display); font-size: 40px; color: rgba(244,236,216,.12); pointer-events: none; }
+.foot { margin-top: 36px; color: var(--ivory-dim); font-size: 13px; max-width: 62ch; }
+
+/* 遊戲桌 */
+.table-head { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.back { background: none; border: 1px solid var(--felt-line); border-radius: 99px; padding: 4px 14px; color: var(--ivory-dim); }
+.back:hover { color: var(--ivory); border-color: var(--brass); }
+.table-head h1 { font-family: var(--f-display); margin: 0; font-size: 30px; }
+.game-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.stat { color: var(--ivory-dim); font-variant-numeric: tabular-nums; }
+.stat b { color: var(--ivory); }
+.seg { display: inline-flex; border: 1px solid var(--felt-line); border-radius: 99px; overflow: hidden; }
+.seg button { background: none; border: 0; padding: 5px 14px; color: var(--ivory-dim); }
+.seg button.on { background: var(--brass); color: var(--ink); font-weight: 700; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.tools.center { justify-content: center; }
+.tools button { background: rgba(255,255,255,.06); border: 1px solid var(--felt-line); border-radius: 6px; padding: 7px 16px; }
+.tools button:hover { border-color: var(--brass); }
+.tools button.on { background: rgba(216,169,78,.2); border-color: var(--brass); }
+.tools button.primary { background: var(--brass); color: var(--ink); border-color: var(--brass); font-weight: 700; }
+.msg { min-height: 1.6em; text-align: center; font-family: var(--f-display); font-size: 18px; color: var(--brass); margin: 12px 0 0; }
+.rule { color: var(--ivory-dim); font-size: 14px; margin: 0 0 14px; max-width: 62ch; }
+
+/* 數獨 */
+.sd-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+.sd-grid { display: grid; grid-template-columns: repeat(9, 1fr); width: min(100%, 468px); aspect-ratio: 1; max-width: 100%;
+  background: var(--ivory); border: 3px solid var(--ink); border-radius: 4px; color: var(--ink); }
+.sd-cell { display: grid; place-items: center; font-family: var(--f-body); font-size: clamp(18px, 4.6vw, 28px); color: #2f5d8c;
+  border-right: 1px solid #c9bfa6; border-bottom: 1px solid #c9bfa6; cursor: pointer; user-select: none; font-variant-numeric: tabular-nums; }
+.sd-cell:nth-child(9n) { border-right: 0; } .sd-cell:nth-last-child(-n+9) { border-bottom: 0; }
+.sd-cell.br { border-right: 2px solid var(--ink); } .sd-cell.bb { border-bottom: 2px solid var(--ink); }
+.sd-cell.given { color: var(--ink); font-weight: 700; }
+.sd-cell.peer { background: #e9dfc4; } .sd-cell.same { background: #e6cf93; }
+.sd-cell.sel { background: #d8a94e; }
+.sd-cell.wrong { color: var(--cinnabar); }
+.notes { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; font-family: var(--f-body); font-size: clamp(8px, 1.8vw, 11px); color: #6b6250; }
+.notes i { font-style: normal; display: grid; place-items: center; }
+.sd-side { display: flex; flex-direction: column; gap: 6px; width: min(100%, 300px); }
+.sd-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sd-pad button { background: rgba(255,255,255,.06); border: 1px solid var(--felt-line); border-radius: 6px; padding: 8px 0 4px; display: grid; }
+.sd-pad button b { font-family: var(--f-body); font-weight: 500; font-size: 26px; line-height: 1.1; }
+.sd-pad button small { font-size: 11px; color: var(--ivory-dim); min-height: 1.2em; }
+.sd-pad button:disabled { opacity: .3; cursor: default; }
+@media (max-width: 720px) { .sd-pad { grid-template-columns: repeat(9, 1fr); gap: 4px; } .sd-pad button b { font-size: 20px; } .sd-side { width: 100%; } }
+
+/* 星位 */
+.st-grid { --n: 7; display: grid; grid-template-columns: repeat(var(--n), 1fr); width: min(100%, 480px); aspect-ratio: 1; margin: 0 auto; border: 3px solid var(--ink); border-radius: 4px; overflow: hidden; }
+.st-cell { border: 0; border-right: 1px solid rgba(29,42,38,.18); border-bottom: 1px solid rgba(29,42,38,.18); display: grid; place-items: center; padding: 0; color: var(--ink); }
+.st-cell.wr { border-right: 3px solid var(--ink); } .st-cell.wb { border-bottom: 3px solid var(--ink); }
+.st-cell .star { font-size: clamp(20px, 5vw, 34px); line-height: 1; }
+.st-cell .x { font-size: clamp(14px, 3vw, 20px); opacity: .45; }
+.st-cell.bad .star { color: var(--cinnabar); }
+.st-cell.bad { box-shadow: inset 0 0 0 3px var(--cinnabar); }
+
+/* 五子棋 */
+.gm-board { display: block; width: min(100%, 600px); aspect-ratio: 1; margin: 0 auto; border-radius: 4px; box-shadow: 0 12px 30px rgba(0,0,0,.35); cursor: pointer; }
+
+/* 麻將配對 */
+.tm-board { --tw: min(58px, calc((100vw - 56px) / 10.4)); --th: calc(var(--tw) * 1.3); --dz: calc(var(--tw) * .14);
+  position: relative; width: calc(var(--tw) * 10 + var(--dz) * 3); height: calc(var(--th) * 6 + var(--dz) * 3); margin: 10px auto 0; max-width: 100%; }
+.tm-tile { position: absolute; width: var(--tw); height: var(--th); padding: 2px; border: 0; border-radius: calc(var(--tw) * .12);
+  left: calc(var(--x) * var(--tw) + (3 - var(--z)) * var(--dz)); top: calc(var(--y) * var(--th) + (3 - var(--z)) * var(--dz));
+  background: var(--ivory); border: 1px solid #a8956a; box-shadow: 1px 1px 0 #cdbb8f, 2px 2px 0 #b9a77e, 3px 3px 0 #a8956a, 4px 4px 0 #8f7d55, 5px 5px 6px rgba(0,0,0,.45);
+  filter: brightness(.74) saturate(.8); transition: transform .12s, filter .12s; }
+.tm-tile svg { width: 100%; height: 100%; display: block; }
+.tm-tile.free { filter: none; }
+.tm-tile.free:hover { transform: translate(-1px, -2px); }
+.tm-tile.sel { background: #f2d58c; transform: translate(-1px, -3px); }
+.tm-tile.hint { background: #bfe3c9; }
+.tm-tile.nope { animation: nope .25s; }
+@keyframes nope { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+/* 楚河漢界 */
+.xq-board { position: relative; width: min(100%, 520px); aspect-ratio: 9.2 / 10.2; margin: 0 auto; background: var(--board-wood); border-radius: 6px; box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+.xq-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.xq-pieces { position: absolute; inset: 0; }
+.xq-p, .xq-dot, .xq-from { position: absolute; left: calc((var(--c) + .6) / 9.2 * 100%); top: calc((var(--r) + .6) / 10.2 * 100%); transform: translate(-50%, -50%); }
+.xq-p { width: 9.4%; aspect-ratio: 1; border-radius: 50%; padding: 0; border: 2px solid currentColor; background: radial-gradient(circle at 35% 30%, #fff9ea, #ecd9b0); box-shadow: 0 3px 0 #9c7a44, 0 5px 8px rgba(0,0,0,.3);
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(15px, 4.4vw, 26px); line-height: 1; display: grid; place-items: center; }
+.xq-p.red { color: #b52f22; } .xq-p.blk { color: #1d2a26; }
+.xq-p.sel { transform: translate(-50%, -62%); box-shadow: 0 7px 0 #9c7a44, 0 10px 14px rgba(0,0,0,.35); }
+.xq-p.last { outline: 2px solid var(--brass); outline-offset: 2px; }
+.xq-from { width: 6%; aspect-ratio: 1; border: 2px dashed rgba(90,61,24,.6); border-radius: 50%; }
+.xq-dot { width: 4%; aspect-ratio: 1; border-radius: 50%; border: 0; padding: 0; background: rgba(47,122,74,.75); }
+.xq-dot.cap { width: 10%; background: none; border: 3px solid rgba(197,67,47,.85); z-index: 2; }
+
+#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; width: 100%; height: 100%; }
+@media (prefers-reduced-motion: reduce) { .box, .tm-tile { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <section id="hall">
+    <header class="hall-head">
+      <div>
+        <h1>Terry 的<em>遊戲間</em></h1>
+        <p>數字、牌桌、棋盤和一點點空間錯覺，平常愛玩的都收在這一桌。</p>
+      </div>
+      <div class="counter">已開桌 <b id="ready-count">0</b> / 10</div>
+    </header>
+    <div class="shelf" id="shelf"></div>
+    <p class="foot">玩法參考常見的經典遊戲規則，畫面、關卡、名稱與音樂都是這個遊戲間自己的。進度與設定只存在你這台裝置的瀏覽器裡。</p>
+  </section>
+
+  <section id="table" hidden>
+    <div class="table-head">
+      <button class="back" id="back">← 回大廳</button>
+      <h1 id="game-title"></h1>
+    </div>
+    <div id="stage"></div>
+  </section>
+</div>
+<canvas id="confetti" hidden></canvas>
+
+<script>
+window.GameRoom = (function () {
+  const games = {};
+  return { games, register(id, mod) { games[id] = mod; } };
+})();
+</script>
+<script src="js/sudoku.js"></script>
+<script src="js/stars.js"></script>
+<script src="js/gomoku.js"></script>
+<script src="js/tilematch.js"></script>
+<script src="js/xiangqi.js"></script>
+<script>
+(function () {
+  const CATALOG = [
+    { id: 'sudoku', no: '一', name: '九宮數獨', glyph: '九', desc: '四種難度，每題都只有唯一解。可做筆記、復原、看提示。' },
+    { id: 'cube', no: '二', name: '轉角方塊', glyph: '方', desc: '三階魔術方塊：一鍵打亂，手動轉回來，或看它一步步還原。' },
+    { id: 'spin', no: '三', name: '旋轉拼板', glyph: '旋', desc: '轉動拼板碎片，讓它們剛好填滿輪廓。' },
+    { id: 'mahjong', no: '四', name: '台灣麻將', glyph: '牌', href: 'mahjong/dist/index.html', desc: '十六張台麻，你和三家電腦。你原本優化過的牌桌直接搬進來，台數照本桌規則結算。' },
+    { id: 'stars', no: '五', name: '星位', glyph: '★', desc: '每排、每列、每個色塊各一顆星，星星互不相碰。' },
+    { id: 'numbox', no: '五', name: '數字框框', glyph: '框', desc: '把盤面切成長方形，每塊面積剛好等於框裡的數字。' },
+    { id: 'tilematch', no: '六', name: '疊牌配對', glyph: '發', desc: '疊了四層的麻將牌，兩兩配對把桌面清空。每局保證有解。' },
+    { id: 'bigtwo', no: '七', name: '大老二', glyph: '♠', desc: '和三位電腦玩家對打，先出完手牌的人贏。' },
+    { id: 'xiangqi', no: '八', name: '楚河漢界', glyph: '帥', desc: '中國象棋，對電腦有三種強度，也能兩人同機對弈。可悔棋。' },
+    { id: 'gomoku', no: '九', name: '五子連珠', glyph: '●', desc: '十五路棋盤，先連成五子者勝。對電腦有兩種強度。' },
+    { id: 'drift', no: '十', name: '迴廊幻境', glyph: '廊', desc: '轉動不可能的建築，讓小旅人走到終點，配上原創環境音樂。' },
+  ];
+  const api = {
+    load(k, d) { try { const v = localStorage.getItem('gr.' + k); return v === null ? d : v; } catch (e) { return d; } },
+    save(k, v) { try { localStorage.setItem('gr.' + k, v); } catch (e) {} },
+    confetti,
+  };
+  const shelf = document.getElementById('shelf');
+  const playable = g => !!(GameRoom.games[g.id] || g.href);
+  const ready = CATALOG.filter(playable);
+  shelf.innerHTML = CATALOG.map(g => {
+    const ok = playable(g);
+    return `<button class="box" data-id="${g.id}" ${ok ? '' : 'disabled'}>
+      <span class="glyph" aria-hidden="true">${g.glyph}</span>
+      <span class="no">第${g.no}桌</span><h2>${g.name}</h2><p>${g.desc}</p>
+      <span class="tag ${ok ? 'ok' : 'wait'}">${ok ? '開始玩' : '準備中'}</span></button>`;
+  }).join('');
+  // 第五桌兩款各算半桌，總共 10 桌
+  const tables = new Set(ready.map(g => g.no));
+  document.getElementById('ready-count').textContent = tables.size;
+  shelf.addEventListener('click', e => { const b = e.target.closest('.box'); if (!b || b.disabled) return; const g = CATALOG.find(x => x.id === b.dataset.id); if (g.href) location.href = g.href; else location.hash = g.id; });
+  document.getElementById('back').onclick = () => { location.hash = ''; };
+
+  let cleanup = null;
+  function route() {
+    const id = location.hash.slice(1), g = CATALOG.find(x => x.id === id), mod = GameRoom.games[id];
+    if (cleanup) { cleanup(); cleanup = null; }
+    const stage = document.getElementById('stage'); stage.innerHTML = '';
+    if (g && mod) {
+      document.getElementById('hall').hidden = true; document.getElementById('table').hidden = false;
+      document.getElementById('game-title').textContent = g.name; document.title = g.name + ' · Terry 的遊戲間';
+      cleanup = mod.mount(stage, api) || null; window.scrollTo(0, 0);
+    } else {
+      document.getElementById('hall').hidden = false; document.getElementById('table').hidden = true; document.title = 'Terry 的遊戲間';
+    }
+  }
+  window.addEventListener('hashchange', route); route();
+
+  function confetti() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
+    cv.hidden = false; cv.width = innerWidth; cv.height = innerHeight;
+    const cols = ['#d8a94e', '#c5432f', '#f4ecd8', '#8fcfc4'];
+    const ps = Array.from({ length: 140 }, () => ({ x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .5, vx: (Math.random() - .5) * 2, vy: 2 + Math.random() * 3, r: Math.random() * 6, c: cols[Math.floor(Math.random() * 4)], a: Math.random() * 6 }));
+    let f = 0;
+    (function tick() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += .1; ctx.fillStyle = p.c; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillRect(-4, -2, 8, 4); ctx.restore(); });
+      if (++f < 200) requestAnimationFrame(tick); else cv.hidden = true;
+    })();
+  }
+})();
+</script>
+</body>
+</html>

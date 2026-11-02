@@ -1,0 +1,18 @@
+{
+  "version": "0.2.5",
+  "source": "監控站 CG2 #m1597",
+  "classification": "independent_monitor_report",
+  "scope": "Chrome 390×844，同一 prehu 固定場景雙擊自摸",
+  "result": "PASS",
+  "observation": "第二下落在結算明細，保留第1局結算",
+  "evidence": "C:/Users/USER/AppData/Local/Temp/mahjong-m1590/portrait-double-pass.png",
+  "limits": [
+    "僅記錄監控站回報，未由本次重新執行",
+    "不代表所有U08情境或整體驗收通過",
+    "不代表實機觸控驗證"
+  ],
+  "developerEvidence": "tests/evidence/v025-m1574/REPORT.md",
+  "previousVersion": "v0.2.4獨立失敗紀錄保留",
+  "frozenManifest": "tests/results/source-hashes-v025-m1574.json",
+  "frozenManifestVerified": true
+}

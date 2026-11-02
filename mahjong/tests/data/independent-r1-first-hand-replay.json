@@ -1,0 +1,527 @@
+{
+  "seed": 20261030,
+  "trace": [
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 119
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 117
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "discard",
+        "tile": 1
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "discard",
+        "tile": 116
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 125
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 127
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "discard",
+        "tile": 120
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "pung",
+        "tiles": [
+          121,
+          123
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "discard",
+        "tile": 124
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 22
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 122
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "discard",
+        "tile": 134
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "pung",
+        "tiles": [
+          132,
+          135
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "discard",
+        "tile": 32
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "pung",
+        "tiles": [
+          33,
+          35
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 70
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 34
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "discard",
+        "tile": 68
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "discard",
+        "tile": 112
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 44
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "chi",
+        "tiles": [
+          38,
+          41
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "pung",
+        "tiles": [
+          46,
+          47
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "discard",
+        "tile": 130
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 3
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "pass"
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 67
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "pung",
+        "tiles": [
+          65,
+          66
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "pass"
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 54
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "pass"
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 69
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "discard",
+        "tile": 29
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "addedKong",
+        "tile": 133,
+        "meld": 1
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "discard",
+        "tile": 92
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "pass"
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 37
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 96
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "pung",
+        "tiles": [
+          98,
+          99
+        ]
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "pass"
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 93
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "pass"
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 2
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "discard",
+        "tile": 20
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "discard",
+        "tile": 131
+      }
+    },
+    {
+      "round": 1,
+      "player": 0,
+      "action": {
+        "kind": "discard",
+        "tile": 53
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "pass"
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "discard",
+        "tile": 38
+      }
+    },
+    {
+      "round": 1,
+      "player": 2,
+      "action": {
+        "kind": "discard",
+        "tile": 45
+      }
+    },
+    {
+      "round": 1,
+      "player": 1,
+      "action": {
+        "kind": "hu"
+      }
+    },
+    {
+      "round": 1,
+      "player": 3,
+      "action": {
+        "kind": "chi",
+        "tiles": [
+          43,
+          50
+        ]
+      }
+    }
+  ],
+  "result": {
+    "kind": "discard",
+    "winner": 1,
+    "loser": 2,
+    "winningTile": 45,
+    "roundId": "round-1",
+    "settlementId": "round-1:settlement",
+    "dealer": 0,
+    "repeat": 0,
+    "rows": [
+      {
+        "name": "門清",
+        "tai": 1
+      },
+      {
+        "name": "獨聽",
+        "tai": 1
+      }
+    ],
+    "tai": 2,
+    "transfers": [
+      {
+        "from": 2,
+        "to": 1,
+        "tai": 2,
+        "payer": 2,
+        "payee": 1,
+        "baseTai": 2,
+        "dealerTai": 0,
+        "totalTai": 2,
+        "amount": 900,
+        "roundId": "round-1",
+        "settlementId": "round-1:settlement",
+        "rows": [
+          {
+            "name": "門清",
+            "tai": 1
+          },
+          {
+            "name": "獨聽",
+            "tai": 1
+          }
+        ]
+      }
+    ],
+    "delta": [
+      0,
+      900,
+      -900,
+      0
+    ],
+    "balances": [
+      10000,
+      10900,
+      9100,
+      10000
+    ],
+    "decomposition": {
+      "pair": 26,
+      "groups": [
+        {
+          "kind": "chi",
+          "types": [
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "kind": "chi",
+          "types": [
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "kind": "chi",
+          "types": [
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "kind": "chi",
+          "types": [
+            13,
+            14,
+            15
+          ]
+        },
+        {
+          "kind": "chi",
+          "types": [
+            18,
+            19,
+            20
+          ]
+        }
+      ]
+    },
+    "winningPlacement": 2,
+    "triggerEventId": null
+  }
+}

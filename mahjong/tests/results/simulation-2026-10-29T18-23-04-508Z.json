@@ -1,0 +1,20 @@
+{
+  "hands": 200,
+  "wins": 189,
+  "draws": 11,
+  "actions": 10813,
+  "byAction": {
+    "discard": 8077,
+    "pung": 705,
+    "pass": 1152,
+    "chi": 560,
+    "hu": 193,
+    "openKong": 82,
+    "addedKong": 25,
+    "concealedKong": 19
+  },
+  "negativeBalanceObserved": true,
+  "errors": [],
+  "durationMs": 35989,
+  "timestamp": "2026-10-29T18:23:04.508Z"
+}

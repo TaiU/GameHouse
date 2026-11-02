@@ -1,0 +1,40 @@
+✔ nearest hu outranks another hu and lower claims; one payment (8.5102ms)
+✔ chi only next player and all available sequences are separate choices (1.0141ms)
+✔ passed hu remains blocked until that player draws (0.9347ms)
+✔ rob added kong moves exactly the fourth tile into winning hand (0.7756ms)
+✔ concealed kong is hidden from rival AI and replacement can cascade flowers (0.6525ms)
+✔ eight flowers and seven rob one terminate immediately without normal hand (0.8222ms)
+✔ 16-tile reserve draw, no transfer, dealer repeat (1.3429ms)
+✔ four dealer changes rotate wind and negatives do not stop next hand (0.6508ms)
+✔ D03 declining self draw still permits ron before own next draw (1.187ms)
+✔ D01 original last 16 physical IDs never drawn; deal in four-tile packets (2.3937ms)
+✔ D01 last discard still accepts hu; no kong and illegal kong is atomic (3.2778ms)
+✔ D01 exhausted wall allows chi and another discard before draw (1.0341ms)
+✔ D01 kong then final flower leaves legal kong and reports replacement shortage (0.5761ms)
+✔ D02 transfers expose mandatory accounting fields and settlement IDs (0.1893ms)
+✔ D03 draw attempt without actual tile does not clear passed hu (0.5763ms)
+✔ D04 nominal two-sided shape cannot add a fifth owned copy (0.5632ms)
+✔ D05 seven flowers do not retroactively rob earlier eighth; events unique (0.4822ms)
+✔ D05 seven rob one references unique event without moving flower; fixed 8 base (0.9833ms)
+✔ D06 snapshot is independent; rival view strips reserve and hidden kong (0.7221ms)
+{"hands":12,"wins":12,"draws":0,"actions":616}
+✔ 16-tile winning structure requires five melds and a pair (1.0035ms)
+✔ payment dealer relationship, repeats, zero tai and negatives (0.8859ms)
+✔ scoring excludes double counted patterns (2.1427ms)
+✔ flower set substitutes correct flower; flower draw is not kong draw (0.3329ms)
+✔ initial deal conservation and illegal input atomicity (9.3692ms)
+✔ multiple real AI hands terminate, conserve tiles/money and advance (1231.1666ms)
+✔ pinhu two-sided versus edge/closed wait and flowers (3.7722ms)
+✔ discard completes pung: four concealed becomes three concealed (0.9406ms)
+✔ small dragons replace individual dragon bonuses; wind can stack (0.3634ms)
+✔ suit patterns select correct tier (0.8996ms)
+✔ all exposed excludes unique wait; open zero-tai hand is legal (0.5421ms)
+✔ event tai requires correct win mode (0.3314ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1357.8469

@@ -1,0 +1,25 @@
+{
+  "case": "U02",
+  "status": "FAIL",
+  "reason": "Previous-round discard physical tile is held again next round; old action with old roundId and turnVersion must not change next round.",
+  "oldAction": {
+    "kind": "discard",
+    "tile": 96,
+    "roundId": "round-1",
+    "turnVersion": 1
+  },
+  "player": 1,
+  "before": {
+    "round": "round-2",
+    "turn": 1,
+    "wall": 73,
+    "discards": 0
+  },
+  "after": {
+    "round": "round-2",
+    "turn": 2,
+    "wall": 72,
+    "discards": 1
+  },
+  "error": null
+}
