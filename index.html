@@ -166,6 +166,16 @@ button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--brass)
 button:disabled { opacity: .4; cursor: default; }
 @media (max-width: 560px) { .b2-backs span { margin-left: -17px; } .b2-card { width: 36px; height: 52px; } .b2-card b, .b2-card i { font-size: 15px; } .b2-hand { gap: 2px; } .b2-table { grid-template-columns: 1fr 1.3fr 1fr; gap: 6px; } }
 
+/* 數字框框 */
+.nb-grid { --n: 8; position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr); width: min(100%, 480px); aspect-ratio: 1; margin: 0 auto; background: var(--ivory); border: 3px solid var(--ink); border-radius: 4px; touch-action: none; user-select: none; }
+.nb-cell { border-right: 1px solid #d6ccb2; border-bottom: 1px solid #d6ccb2; display: grid; place-items: center; color: var(--ink); position: relative; z-index: 2; pointer-events: none; }
+.nb-cell b { font-size: clamp(14px, 3.6vw, 22px); font-weight: 700; }
+.nb-box, .nb-ghost { position: absolute; left: calc(var(--c) / var(--n) * 100%); top: calc(var(--r) / var(--n) * 100%); width: calc(var(--w) / var(--n) * 100%); height: calc(var(--h) / var(--n) * 100%); }
+.nb-box { z-index: 1; border: 0; padding: 0; background: var(--col); box-shadow: inset 0 0 0 2px var(--ink); border-radius: 3px; }
+.nb-box.bad { background: repeating-linear-gradient(45deg, var(--col) 0 6px, #f4ecd8 6px 10px); box-shadow: inset 0 0 0 2px var(--cinnabar); }
+.nb-ghost { z-index: 3; border: 2px dashed var(--ink); background: rgba(216,169,78,.25); display: grid; place-items: end; pointer-events: none; }
+.nb-ghost span { font-size: 12px; background: var(--ink); color: var(--ivory); padding: 0 5px; border-radius: 3px 0 0 0; }
+
 #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; width: 100%; height: 100%; }
 @media (prefers-reduced-motion: reduce) { .box, .tm-tile { transition: none; } }
 </style>
@@ -207,6 +217,7 @@ window.GameRoom = (function () {
 <script src="js/tilematch.js"></script>
 <script src="js/xiangqi.js"></script>
 <script src="js/bigtwo.js"></script>
+<script src="js/numbox.js"></script>
 <script>
 (function () {
   const CATALOG = [
@@ -215,7 +226,7 @@ window.GameRoom = (function () {
     { id: 'spin', no: '三', name: '旋轉拼板', glyph: '旋', desc: '轉動拼板碎片，讓它們剛好填滿輪廓。' },
     { id: 'mahjong', no: '四', name: '台灣麻將', glyph: '牌', href: 'mahjong/dist/index.html', desc: '十六張台麻，你和三家電腦。你原本優化過的牌桌直接搬進來，台數照本桌規則結算。' },
     { id: 'stars', no: '五', name: '星位', glyph: '★', desc: '每排、每列、每個色塊各一顆星，星星互不相碰。' },
-    { id: 'numbox', no: '五', name: '數字框框', glyph: '框', desc: '把盤面切成長方形，每塊面積剛好等於框裡的數字。' },
+    { id: 'numbox', no: '五', name: '數字框框', glyph: '框', desc: '拖拉畫出長方形，每塊恰好框住一個數字，格子數等於那個數字。三種盤面大小。' },
     { id: 'tilematch', no: '六', name: '疊牌配對', glyph: '發', desc: '疊了四層的麻將牌，兩兩配對把桌面清空。每局保證有解。' },
     { id: 'bigtwo', no: '七', name: '大老二', glyph: '♠', desc: '台灣常見玩法，和三家電腦對打。梅花 3 先出，五張牌組有順子、葫蘆、鐵支、同花順，跨局累計分數。' },
     { id: 'xiangqi', no: '八', name: '楚河漢界', glyph: '帥', desc: '中國象棋，對電腦有三種強度，也能兩人同機對弈。可悔棋。' },
