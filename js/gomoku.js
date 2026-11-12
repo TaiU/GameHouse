@@ -72,13 +72,13 @@
       root.querySelectorAll('#gm-level button').forEach(b => b.classList.toggle('on', b.dataset.l === level));
       $('#gm-level').hidden = mode !== 'ai';
       $('#gm-turn').innerHTML = st.win ? '' : `輪到 <b>${st.turn === 1 ? '黑' : '白'}</b>${mode === 'ai' && st.turn === 2 ? '（思考中）' : ''}`;
-      ctx.fillStyle = css('--board-wood') || '#d9b77a'; ctx.fillRect(0, 0, 600, 600);
-      ctx.strokeStyle = 'rgba(60,40,15,.75)'; ctx.lineWidth = 1;
+      ctx.fillStyle = css('--board') || '#d9b77a'; ctx.fillRect(0, 0, 600, 600);
+      ctx.strokeStyle = css('--board-line') || 'rgba(60,40,15,.75)'; ctx.lineWidth = 1;
       for (let k = 0; k < N; k++) {
         ctx.beginPath(); ctx.moveTo(M, M + k * step); ctx.lineTo(600 - M, M + k * step); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(M + k * step, M); ctx.lineTo(M + k * step, 600 - M); ctx.stroke();
       }
-      ctx.fillStyle = 'rgba(60,40,15,.85)';
+      ctx.fillStyle = css('--board-line') || 'rgba(60,40,15,.85)';
       for (const [r, c] of [[3, 3], [3, 11], [7, 7], [11, 3], [11, 11]]) { ctx.beginPath(); ctx.arc(M + c * step, M + r * step, 4, 0, 7); ctx.fill(); }
       const last = st.moves[st.moves.length - 1];
       st.b.forEach((p, i) => {
@@ -86,9 +86,9 @@
         const g = ctx.createRadialGradient(x - R * .35, y - R * .35, R * .1, x, y, R);
         if (p === 1) { g.addColorStop(0, '#6a6a6a'); g.addColorStop(1, '#111'); } else { g.addColorStop(0, '#fff'); g.addColorStop(1, '#cfcac0'); }
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, 7); ctx.fill();
-        if (i === last) { ctx.fillStyle = '#d0412d'; ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 7); ctx.fill(); }
+        if (i === last) { ctx.fillStyle = css('--accent') || '#d0412d'; ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 7); ctx.fill(); }
       });
-      if (st.win) { ctx.strokeStyle = '#d0412d'; ctx.lineWidth = 3; const pts = st.win.map(i => [M + (i % N) * step, M + Math.floor(i / N) * step]).sort((a, b) => a[0] - b[0] || a[1] - b[1]); ctx.beginPath(); ctx.moveTo(...pts[0]); ctx.lineTo(...pts[pts.length - 1]); ctx.stroke(); }
+      if (st.win) { ctx.strokeStyle = css('--accent') || '#d0412d'; ctx.lineWidth = 3; const pts = st.win.map(i => [M + (i % N) * step, M + Math.floor(i / N) * step]).sort((a, b) => a[0] - b[0] || a[1] - b[1]); ctx.beginPath(); ctx.moveTo(...pts[0]); ctx.lineTo(...pts[pts.length - 1]); ctx.stroke(); }
     }
     function play(i) {
       if (st.win || st.b[i]) return;
@@ -116,7 +116,8 @@
     $('#gm-mode').onclick = e => { const b = e.target.closest('button'); if (!b) return; mode = b.dataset.m; api.save('gomoku.mode', mode); newGame(); };
     $('#gm-level').onclick = e => { const b = e.target.closest('button'); if (!b) return; level = b.dataset.l; api.save('gomoku.level', level); draw(); };
     newGame();
-    return () => clearTimeout(aiTimer);
+    addEventListener('gr-theme', draw);
+    return () => { clearTimeout(aiTimer); removeEventListener('gr-theme', draw); };
   };
 
   if (typeof module !== 'undefined') module.exports = G; else window.GameRoom.register('gomoku', G);
