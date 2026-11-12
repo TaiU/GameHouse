@@ -24,7 +24,7 @@ Terry 的遊戲間：一個網頁大廳，收著平常愛玩的小遊戲。純�
 - `js/<遊戲>.js`：每個遊戲一個檔，用 `GameRoom.register(id, { mount(root, api) })` 掛上大廳；`mount` 回傳清理函式。
 - 迴廊幻境分三個檔：`js/drift.js` 引擎與畫面、`js/drift-levels.js` 關卡、`js/drift-audio.js` 音樂與音效（試聽頁 `drift-audio.html`）。關卡格式與規則見 `docs/drift-level-format.md`；改關卡後用 `node tools/drift-check.js js/drift-levels.js` 驗證每關解得開，`node tools/drift-shot.js 輸出資料夾` 逐關截圖。
 - 網頁 app（PWA）：`manifest.webmanifest` 與 `sw.js` 讓遊戲間可以加到手機主畫面、離線也能玩。`sw.js` 先上網拿最新檔，斷線才用快取；新增遊戲檔時把路徑加進 `sw.js` 的 `CORE`，並把 `VERSION` 加一。
-- `icons/`：logo 原稿 `logo.svg`（黃銅門框裡一顆朱紅棋子，取「遊戲間」的「間」），其餘尺寸用 `node tools/make-icons.js` 從它產生。
+- `icons/`：logo 原稿 `logo.svg`（淺色門框裡一顆橘紅棋子，取「遊戲間」的「間」），其餘尺寸用 `node tools/make-icons.js` 從它產生。
 - `mahjong/`：台麻專案。`dist/` 是遊戲本體，`RULES.md` 是本桌規則，測試用 `cd mahjong && node --test tests/*.test.mjs` 執行。
 
 ## 本機試玩

@@ -1,7 +1,7 @@
 // 遊戲間的 service worker：讓網頁 app 離線也能玩。
 // 本站檔案「先上網拿最新、斷線才用快取」，所以每次推上 main 後，有網路時一定是新版；
 // 外部字型與 three.js 「先用快取」。新增遊戲檔時把路徑加進 CORE，並把 VERSION 加一。
-const VERSION = 'gamehouse-v1';
+const VERSION = 'gamehouse-v2';
 const CORE = [
   './', 'index.html', 'manifest.webmanifest',
   'icons/logo.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png', 'icons/favicon-32.png',

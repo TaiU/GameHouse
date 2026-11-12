@@ -149,7 +149,8 @@ const SpinFlip = (function () {
     return best;
   };
 
-  const PAL = ['#d8a94e', '#c5432f', '#f4ecd8', '#3f8f84', '#2b3b55'];
+  // 翻轉圖樣的面色：遊戲間強調色加灰階
+  const PAL = ['#FF5B2E', '#ECEAE4', '#6B6F80', '#3A3E4E', '#B9B7B0'];
   const LV = [
     { n: 3, k: 3, steps: 4, name: '3×3' },
     { n: 4, k: 4, steps: 6, name: '4×4' },
